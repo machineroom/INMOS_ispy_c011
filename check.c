@@ -272,7 +272,8 @@ int findtype(void) {
 	char            bpw;
 	
 	bytes = WriteLink(TheLink, BOOTSTRING, sizeof(BOOTSTRING), TIMEOUT);
-	if (bytes == sizeof(BOOTSTRING)) {
+	if (bytes == sizeof(BOOTSTRING)) 
+        {
 		int count = 0;
 		bytes = 0;
 		going = TRUE;
@@ -603,7 +604,7 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
             if (information) {
                 INFO(("# CPU"));
             }
-            switch (p-> tptype) {
+            switch (p->tptype) {
                 /*{{{  case T32:*/
             case T32:
                 if (!load(TheLink, p,
@@ -642,7 +643,7 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
                 INFO((", link"));
             }
 
-            if (p-> routelen == 0) {
+            if (p->routelen == 0) {
                 unsigned char * buffer;
                 unsigned int tmp;
                 buffer = (unsigned char * ) Malloc(257);
@@ -672,10 +673,10 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
                 INFO(("# Loading ispy"));
             }
 
-            if (p-> tptype != T_414) {
+            if (p->tptype != T_414) {
                 /* T414A */
                 int j;
-                switch (bpw(p-> tptype)) {
+                switch (bpw(p->tptype)) {
                     /*{{{  case 2:*/
                 case 2:
                     if (!load(TheLink, p,
@@ -705,7 +706,7 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
                             INFO(("\n"));
                         }
                         writeresults(root, LinkName, c4read, kong);
-                        AbortExit(PROGRAM_NAME, "Partial results : Failed to load CHECK32 code on Transputer %d", p-> tpid);
+                        AbortExit(PROGRAM_NAME, "Partial results : Failed to load CHECK32 code on Transputer %d", p->tpid);
                     }
                     break;
                 }
@@ -753,7 +754,7 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
                 if (information)
                     INFO(("# C004s "));
                 stop(p);
-                switch (bpw(p-> tptype)) {
+                switch (bpw(p->tptype)) {
                 case 2:
                     load(TheLink, p,
                         c00416_code.CodeSize,
@@ -797,10 +798,10 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
                         command[0] = '\4';
                         sendiserver(TheLink, 2, command); /* reset */
                         c004s[c004count++] = sum;
-                        while (root - > next != NULL) {
+                        while (root->next != NULL) {
                             for (p = root;
-                                (p-> next != NULL) && (p-> next - > next != NULL); p = p-> next);
-                            free(p-> next);
+                                (p->next != NULL) && (p->next->next != NULL); p = p->next);
+                            free(p->next);
                             p-> next = NULL;
                         }
                         free(root);

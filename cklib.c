@@ -757,11 +757,9 @@ void setroute(LINK TheLink, struct tpstats * p, int lastlink) {
 				if (lastlink < 4) {
 					AbortExit("loader", "Timed out setting route to processor %d",  p->links[lastlink]->tpid);
 				}
-				//else {
-				//	if (lastlink == 4) {
-				//		AbortExit("loader", "Timed out talking to application on processor %d", p->tpid);
-				//	}
-				//}
+				else if (lastlink == 4) {
+					//AbortExit("loader", "Timed out talking to application on processor %d", p->tpid);
+				}
 			}
 		
 			free(route);
@@ -797,7 +795,7 @@ int load(LINK TheLink, struct tpstats * p,
 	fprintf(stderr, "load - CodeSize %ld Offset %ld WorkSpace %ld VectorSpace %ld, BytesPerWord %d\n",
 	                CodeSize, Offset, WorkSpace, VectorSpace, BytesPerWord);
 	fprintf(stderr, "load - tpboot\n");
-	//tpboot(TheLink, p);
+	tpboot(TheLink, p);
 	length = CodeSize;
 	if (p->parent != NULL) {
 		fprintf(stderr,"load - sendiserver 1\n");

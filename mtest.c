@@ -421,11 +421,6 @@ main (int argc, char *argv[])
   ok = (TheLink > 0);
   if (!ok)
     AbortExit (PROGRAM_NAME, "Error opening link name \"%s\"", LinkName);
-  int success;
-  success = ResetLink(TheLink);
-  if (success < 0) {
-    AbortExit(PROGRAM_NAME, "reset link failed (result = %i)", success);
-  }
   /*{{{  load 'em up */
   if (info)
     printf ("# load");
@@ -441,7 +436,7 @@ main (int argc, char *argv[])
 		{
 		  if (info)
 		    printf (" T2 load %d", p->tpid);
-		  //stop (p);
+		  stop (p);
 		  ok = load (TheLink, p,
 			     mtest16_code.CodeSize,
 			     mtest16_code.Offset,
@@ -458,7 +453,7 @@ main (int argc, char *argv[])
 		{
 		  if (info)
 		    printf (" T4 load %d", p->tpid);
-		  //stop (p);
+		  stop (p);
 		  ok = load (TheLink, p,
 			     mtest32_code.CodeSize,
 			     mtest32_code.Offset,
