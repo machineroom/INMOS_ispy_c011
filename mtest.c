@@ -440,8 +440,8 @@ main (int argc, char *argv[])
 	      if (T2)
 		{
 		  if (info)
-		    printf (" %d", p->tpid);
-		  stop (p);
+		    printf (" T2 load %d", p->tpid);
+		  //stop (p);
 		  ok = load (TheLink, p,
 			     mtest16_code.CodeSize,
 			     mtest16_code.Offset,
@@ -457,8 +457,8 @@ main (int argc, char *argv[])
 	      if (T4)
 		{
 		  if (info)
-		    printf (" %d", p->tpid);
-		  stop (p);
+		    printf (" T4 load %d", p->tpid);
+		  //stop (p);
 		  ok = load (TheLink, p,
 			     mtest32_code.CodeSize,
 			     mtest32_code.Offset,
