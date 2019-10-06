@@ -59,7 +59,6 @@ void c011_init(void) {
     bcm2835_init();
     set_control_output_pins();
     bcm2835_gpio_write(ANALYSE, LOW);
-    c011_reset();
 }
 
 void c011_reset(void) {
@@ -248,7 +247,7 @@ CloseLink(LINK LinkId)
 }
 
 int
-ReadLink(LINK LinkId, char *Buffer, unsigned Count, int Timeout)
+ReadLink(LINK LinkId, unsigned char *Buffer, unsigned int Count, int Timeout)
 {
 	int result;
 
@@ -262,7 +261,7 @@ ReadLink(LINK LinkId, char *Buffer, unsigned Count, int Timeout)
 }
 
 int
-WriteLink(LINK LinkId, char *Buffer, unsigned Count, int Timeout)
+WriteLink(LINK LinkId, unsigned char *Buffer, unsigned int Count, int Timeout)
 {
 	int result;
 	result = c011_write_bytes (Buffer, Count, Timeout);
