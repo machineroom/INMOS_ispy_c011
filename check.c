@@ -463,11 +463,11 @@ void solve(struct tpstats * current, int length, unsigned char *buffer) {
     int             id;
 
     /*
-    printf("solve: processor %d [", current->tpid);
+    fprintf(stderr,"solve: processor %d [", current->tpid);
     for (id=0; id<length; id++) {
-    	printf("%d ", buffer[id]);
+    	fprintf(stderr,"%d ", buffer[id]);
 	}
-	printf("]\n");
+	fprintf(stderr,"]\n");
 	*/
 	
     switch (buffer[0]) {
@@ -589,7 +589,7 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
             INFO((", CPU type\n"));
         }
 
-        //printf("finding type\n");
+        //fprintf(stderr,"finding type\n");
         p-> tptype = findtype();
         if (information) {
             writeup(p, 0, information);
@@ -666,7 +666,7 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
             getstats(p);
             if (information) {
                 writeup(p, 0, information);
-                printf("\n");
+                fprintf(stderr,"\n");
             }
             if (information) {
                 INFO(("# Loading ispy"));
@@ -727,7 +727,7 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
                         solve(p, length, buffer);
                         if (information) {
                             writeup(p, 0, information);
-                            printf("\n");
+                            fprintf(stderr,"\n");
                         }
                     }
                     j++;

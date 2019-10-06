@@ -794,14 +794,16 @@ int load(LINK TheLink, struct tpstats * p,
 	int 		flag, j, k;
 	unsigned char 	params[16];
 	
-	printf("load - tpboot\n");
-	tpboot(TheLink, p);
+	fprintf(stderr, "load - CodeSize %ld Offset %ld WorkSpace %ld VectorSpace %ld, BytesPerWord %d\n",
+	                CodeSize, Offset, WorkSpace, VectorSpace, BytesPerWord);
+	fprintf(stderr, "load - tpboot\n");
+	//tpboot(TheLink, p);
 	length = CodeSize;
 	if (p->parent != NULL) {
-		printf("load - sendiserver 1\n");
+		fprintf(stderr,"load - sendiserver 1\n");
 		flag = sendiserver(TheLink, sizeof(boot), boot);
 	} else {
-		printf("load - writelink 1\n");
+		fprintf(stderr,"load bootstrap\n");
 		flag = WriteLink(TheLink, boot, sizeof(boot), TIMEOUT) == sizeof(boot);
 	}
 	if (flag) {
@@ -827,11 +829,16 @@ int load(LINK TheLink, struct tpstats * p,
 		}
 	
 		if (p->parent != NULL) {
-			printf("load - sendiserver 2\n");
+			fprintf(stderr,"load - sendiserver 2\n");
 			flag = sendiserver(TheLink, 4 * BytesPerWord, params);
 		} else {
-			printf("load - writelink 2\n");
-			flag = (WriteLink(TheLink, params, 4 * BytesPerWord, TIMEOUT) == (4 * BytesPerWord));
+			int to_write = 4 * BytesPerWord;
+        	fprintf(stderr,"load 4 parameters (%d)\n", to_write);
+			int written = WriteLink(TheLink, params, to_write, TIMEOUT);
+			flag = to_write == written;
+			if (flag == 0) {
+			    fprintf (stderr,"write request %d written %d\n", to_write, written);
+			}
 		}
 		
 		for (i = 0; (i < length) && flag; i += count)	{
@@ -840,15 +847,20 @@ int load(LINK TheLink, struct tpstats * p,
 				count = SEGSIZE;
 			}
 			if (p->parent != NULL) {
-				printf("load - sendiserver 3\n");
+				fprintf(stderr,"load - sendiserver 3\n");
 				flag = sendiserver(TheLink, (int) count, &Code[i]);
 			} else {
-				printf("load - writelink 3\n");
-				flag = WriteLink(TheLink, &Code[i], (int) count, TIMEOUT) == (int) count;
+    			int to_write = count;
+				fprintf(stderr,"load code (%d)\n", to_write);
+			    int written = WriteLink(TheLink, &Code[i], to_write, TIMEOUT);
+			    flag = to_write == written;
+			    if (flag == 0) {
+			        fprintf (stderr,"write request %d written %d\n", to_write, written);
+			    }
 			}
 		}
 	}
-	printf("load - finished [%d]\n", flag);
+	fprintf(stderr,"load - finished [%d]\n", flag);
 	return (flag);
 
 }
