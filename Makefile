@@ -11,11 +11,11 @@ OPTIM           = -O
 CC              = gcc -c $(OPTIM) $(COPTS)
 CCLM            = $(CC)
 COPTSLM         = $(COPTS)
-LINKMODULE      = b004link
+LINKMODULE      = c011link
 DEFAULTLINK	= \"/dev/link0\"
 LINKOBJS        = $(LINKMODULE)$(O)
 LINK            = gcc $(OPTIM)
-LIBRARIES       =
+LIBRARIES       = -lbcm2835
 RM              = rm
 OCCAM		= oc -y -a -n -k -v -e -w -h -T
 FIND            = grep
@@ -52,7 +52,7 @@ check$(O):      check.c checklib.h inmos.h cklib.h \
 #
 
 mtest$(E):      mtest$(O) cklib$(O) $(LINKOBJS)
-		$(LINK) -o mtest$(E) mtest$(O) cklib$(O) $(LINKOBJS)
+		$(LINK) -o mtest$(E) mtest$(O) cklib$(O) $(LINKOBJS) $(LIBRARIES)
 
 mtest$(O):      mtest.c cklib.h inmos.h  \
 		mtest32.h mtest16.h checklib.h
