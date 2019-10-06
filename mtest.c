@@ -421,6 +421,11 @@ main (int argc, char *argv[])
   ok = (TheLink > 0);
   if (!ok)
     AbortExit (PROGRAM_NAME, "Error opening link name \"%s\"", LinkName);
+  int success;
+  success = ResetLink(TheLink);
+  if (success < 0) {
+    AbortExit(PROGRAM_NAME, "reset link failed (result = %i)", success);
+  }
   /*{{{  load 'em up */
   if (info)
     printf ("# load");
