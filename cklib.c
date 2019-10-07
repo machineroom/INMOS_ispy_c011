@@ -710,10 +710,8 @@ int sendiserver(LINK TheLink, unsigned int length, unsigned char *buffer) {
 	int16[1] = (unsigned char) (length >> 8);
 	
 	if ((WriteLink(TheLink, int16, 2, TIMEOUT) == 2) && length) {
-		unsigned int start=0, written=0; /* , writing=64;  */
+		unsigned int start=0, written=0;
 		do {
-			/* if ((length-written) < writing)
-			writing = length-written; */
 			start += written;
 			written = WriteLink(TheLink, &buffer[start], (length-written), TIMEOUT);
 		} while (written && ((start+written) < length));
@@ -791,17 +789,18 @@ int load(LINK TheLink, struct tpstats * p,
 	long 		count, i, length;
 	int 		flag, j, k;
 	unsigned char 	params[16];
+	int to_write;
 	
-	fprintf(stderr, "load - CodeSize %ld Offset %ld WorkSpace %ld VectorSpace %ld, BytesPerWord %d\n",
-	                CodeSize, Offset, WorkSpace, VectorSpace, BytesPerWord);
-	fprintf(stderr, "load - tpboot\n");
+	INFO (("load - CodeSize %ld Offset %ld WorkSpace %ld VectorSpace %ld, BytesPerWord %d\n",
+	                CodeSize, Offset, WorkSpace, VectorSpace, BytesPerWord));
+	INFO (("load - send tpboot\n"));
 	tpboot(TheLink, p);
 	length = CodeSize;
 	if (p->parent != NULL) {
-		fprintf(stderr,"load - sendiserver 1\n");
+		INFO (("send bootstrap to iserver\n"));
 		flag = sendiserver(TheLink, sizeof(boot), boot);
 	} else {
-		fprintf(stderr,"load bootstrap\n");
+		INFO (("send bootstrap to link\n"));
 		flag = WriteLink(TheLink, boot, sizeof(boot), TIMEOUT) == sizeof(boot);
 	}
 	if (flag) {
@@ -826,12 +825,12 @@ int load(LINK TheLink, struct tpstats * p,
 			Offset = Offset >> 8;
 		}
 	
+        to_write = 4 * BytesPerWord;
 		if (p->parent != NULL) {
-			fprintf(stderr,"load - sendiserver 2\n");
-			flag = sendiserver(TheLink, 4 * BytesPerWord, params);
+        	INFO (("send 4 parameters, (%d bytes), to iserver\n", to_write));
+			flag = sendiserver(TheLink, to_write, params);
 		} else {
-			int to_write = 4 * BytesPerWord;
-        	fprintf(stderr,"load 4 parameters (%d)\n", to_write);
+        	INFO (("send 4 parameters, (%d bytes), to link\n", to_write));
 			int written = WriteLink(TheLink, params, to_write, TIMEOUT);
 			flag = to_write == written;
 			if (flag == 0) {
@@ -844,12 +843,12 @@ int load(LINK TheLink, struct tpstats * p,
 			if (count > SEGSIZE) {
 				count = SEGSIZE;
 			}
+  			to_write = count;
 			if (p->parent != NULL) {
-				fprintf(stderr,"load - sendiserver 3\n");
+				INFO (("send code (%d bytes) to server\n", to_write));
 				flag = sendiserver(TheLink, (int) count, &Code[i]);
 			} else {
-    			int to_write = count;
-				fprintf(stderr,"load code (%d)\n", to_write);
+				INFO (("send code (%d bytes) to link\n", to_write));
 			    int written = WriteLink(TheLink, &Code[i], to_write, TIMEOUT);
 			    flag = to_write == written;
 			    if (flag == 0) {
@@ -858,7 +857,7 @@ int load(LINK TheLink, struct tpstats * p,
 			}
 		}
 	}
-	fprintf(stderr,"load - finished [%d]\n", flag);
+    INFO (("load - finished [flag=%d]\n", flag));
 	return (flag);
 
 }

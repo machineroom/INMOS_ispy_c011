@@ -525,7 +525,6 @@ void solve(struct tpstats * current, int length, unsigned char *buffer) {
 }
 
 void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
-    /* int             c004count = 0, c004s[100]; */
     do {
         int i, success;
         struct tpstats * parent, * p;
@@ -573,25 +572,25 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
         root = (struct tpstats * ) Malloc(sizeof(struct tpstats));
         p = root;
         parent = NULL;
-        p-> tpid = 0;
-        p-> procspeed = 0;
-        p-> bootlink = 255;
-        p-> linkspeed = 0.0f;
+        p->tpid = 0;
+        p->procspeed = 0;
+        p->bootlink = 255;
+        p->linkspeed = 0.0f;
         for (i = 0; i < 4; i++) {
-            p-> links[i] = NULL;
-            p-> linkno[i] = UNKNOWN;
+            p->links[i] = NULL;
+            p->linkno[i] = UNKNOWN;
         }
-        p-> routelen = 0;
-        p-> parent = NULL;
-        p-> next = NULL;
-        p-> info[0] = '\0';
+        p->routelen = 0;
+        p->parent = NULL;
+        p->next = NULL;
+        p->info[0] = '\0';
 
         if (information) {
             INFO((", CPU type\n"));
         }
 
         //fprintf(stderr,"finding type\n");
-        p-> tptype = findtype();
+        p->tptype = findtype();
         if (information) {
             writeup(p, 0, information);
             putchar('\n');
