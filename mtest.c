@@ -344,8 +344,8 @@ void getparams(int argc, char *argv[], int *zero, unsigned long *endaddr,
 	     break;
 	   case 't':
 	   case 'T':
-	     ++c;
-	  switch (*c)
+	       ++c;
+           switch (*c)
 	       {
 	       case '2':
 	         *T2 = TRUE;
@@ -401,254 +401,229 @@ main (int argc, char *argv[])
   unsigned long endaddr = 0x40000;
   int ok;
   int only = -1, iterations = 1;
-  /*}}}  */
   CheckFile[0] = '\0';
   getparams (argc, argv, &zero, &endaddr, &c4s, &logging,
-	     &info, &soak, &T2, &T4, &only, &quick, &extra, CheckFile);
-  if (info)
+             &info, &soak, &T2, &T4, &only, &quick, &extra, CheckFile);
+  if (info) {
     printf ("# mtest reading ispy results\n");
+  }
   if (CheckFile[0]) {
-     FILE *checkin;
-     checkin = fopen(CheckFile, "r");
-     transputers = lex (checkin, &root, Pipe, LinkName, Banner);
-  } else
-     transputers = lex (stdin, &root, Pipe, LinkName, Banner);
+    FILE *checkin;
+    checkin = fopen(CheckFile, "r");
+    transputers = lex (checkin, &root, Pipe, LinkName, Banner);
+  } else {
+    transputers = lex (stdin, &root, Pipe, LinkName, Banner);
+  }
   root = sortl (root);		/* sort by route length in case of /R option  */
-  if (!transputers--)
+  if (!transputers--) {
     AbortExit (PROGRAM_NAME, "No transputers found");
+  }
   TheLink = OpenLink (LinkName);
   ok = (TheLink > 0);
-  if (!ok)
+  if (!ok) {
     AbortExit (PROGRAM_NAME, "Error opening link name \"%s\"", LinkName);
-  /*{{{  load 'em up */
-  if (info)
+  }
+  /* load 'em up */
+  if (info) {
     printf ("# load");
-  for (p = root; (p != NULL) && ok; p = p->next)
-    if (zero || (!zero && (p->parent != NULL)))
-      {
-	if ((only == -1) || (only == p->tpid))	/* only load ours */
-	  switch (bpw (p->tptype))
-	    {
-	      /*{{{  16 bitters */
-	    case 2:
-	      if (T2)
-		{
-		  if (info)
-		    printf (" T2 load %d", p->tpid);
-		  stop (p);
-		  ok = load (TheLink, p,
-			     mtest16_code.CodeSize,
-			     mtest16_code.Offset,
-			     mtest16_code.WorkSpace,
-			     mtest16_code.VectorSpace,
-			     mtest16_code.BytesPerWord,
-			     mtest16_code.Code);
-		}
-	      break;
-	      /*}}}  */
-	      /*{{{  32 bitters */
-	    case 4:
-	      if (T4)
-		{
-		  if (info)
-		    printf (" T4 load %d", p->tpid);
-		  stop (p);
-		  ok = load (TheLink, p,
-			     mtest32_code.CodeSize,
-			     mtest32_code.Offset,
-			     mtest32_code.WorkSpace,
-			     mtest32_code.VectorSpace,
-			     mtest32_code.BytesPerWord,
-			     mtest32_code.Code);
-		}
-	      /*}}}  */
-	    }
-	/*{{{  init  */
-	if (!ok)
-	  printf ("\n%s - Error loading processor %d\n", PROGRAM_NAME, p->tpid);
-	p->extra = Malloc (sizeof (struct meminfo));
-	q = (struct meminfo *) p->extra;
-	i = strlen (p->info);
-	p->info[i++] = ' ';
-	p->info[i] = '\0';
-	q->endmem = 3;
-	q->error = 0UL;
-	q->memsize = 0UL;
-        q->watermark = 0UL;
-	/*}}}  */
-      }
-    else
-      {
-	p->extra = Malloc (sizeof (struct meminfo));
-	q = (struct meminfo *) p->extra;
-	q->endmem = 3;
-	q->error = 0UL;
-	q->memsize = 0UL;
+  }
+  for (p = root; (p != NULL) && ok; p = p->next) {
+    if (zero || (!zero && (p->parent != NULL))) {
+	    if ((only == -1) || (only == p->tpid)) { /* only load ours */
+        switch (bpw (p->tptype)) {
+        case 2:
+          /* 16 bitters */
+          if (T2) {
+            if (info) {
+              printf (" T2 load %d", p->tpid);
+            }
+            stop (p);
+            ok = load (TheLink, p,
+                       mtest16_code.CodeSize,
+                       mtest16_code.Offset,
+                       mtest16_code.WorkSpace,
+                       mtest16_code.VectorSpace,
+                       mtest16_code.BytesPerWord,
+                       mtest16_code.Code);
+          } else {
+            if (info) {
+              printf ("ignoring T2 %d", p->tpid);
+            }
+          }
+        break;
+        case 4:
+          /* 32 bitters */
+          if (T4) {
+            if (info) {
+              printf (" T4 load %d", p->tpid);
+            }
+            stop (p);
+            ok = load (TheLink, p,
+                       mtest32_code.CodeSize,
+                       mtest32_code.Offset,
+                       mtest32_code.WorkSpace,
+                       mtest32_code.VectorSpace,
+                       mtest32_code.BytesPerWord,
+                       mtest32_code.Code);
+          } else {
+            if (info) {
+              printf ("ignoring T4 %d", p->tpid);
+            }
+          }
+        }
+    	  if (!ok) {
+    	    printf ("\n%s - Error loading processor %d\n", PROGRAM_NAME, p->tpid);
+    	  }
+    	  p->extra = Malloc (sizeof (struct meminfo));
+    	  q = (struct meminfo *) p->extra;
+    	  i = strlen (p->info);
+    	  p->info[i++] = ' ';
+    	  p->info[i] = '\0';
+    	  q->endmem = 3;
+    	  q->error = 0UL;
+    	  q->memsize = 0UL;
         q->watermark = 0UL;
       }
-  /*}}}  */
-  if (info)
-    printf ("\n# start");
-  while (ok && iterations--)	/* there are still iterations to go  */
-    {
-      int count = 0;
-
-      if (only == -1)
-	/*{{{  start them all */
-	for (p = root; p != NULL; p = p->next)
-	  {
-	    if (zero || (!zero && (p->parent != NULL)))
-	      {
-		/*{{{  start T4s ? */
-		if (T4 && bpw (p->tptype) == 4)
-		  {
-		    count++;
-		    ((struct meminfo *) p->extra)->endmem = 2;
-		  }
-		/*}}}  */
-		/*{{{  start T2s ? */
-		if (T2 && bpw (p->tptype) == 2)
-		  {
-		    if (c4s)
-		      {
-			count++;
-			((struct meminfo *) p->extra)->endmem = 2;
-		      }
-		    else
-		      {
-			for (i = 0; (class (p->linkno[i]) != C4) && (i < 4); i++);
-			if (i == 4)
-			  {
-			    count++;
-			    ((struct meminfo *) p->extra)->endmem = 2;
-			  }
-		      }
-		  }
-		/*}}}  */
-	      }
-	    if (((struct meminfo *) p->extra)->endmem != 3)
-	      {
-		if (info)
-		  printf (" %d", p->tpid);
-		sendparams (TheLink, p, quick, endaddr);
-	      }
-	  }
-      /*}}}  */
       else
-	{
-	  /*{{{  only one to be tested */
-	  for (p = root; (p != NULL) && (p->tpid != only); p = p->next);
-	  if (p != NULL)
-	    {
+      {
+      	p->extra = Malloc (sizeof (struct meminfo));
+      	q = (struct meminfo *) p->extra;
+      	q->endmem = 3;
+      	q->error = 0UL;
+      	q->memsize = 0UL;
+        q->watermark = 0UL;
+      }
+    }
+  }
+  if (info) {
+    printf ("\n# start");
+  }
+  while (ok && iterations--) { /* there are still iterations to go  */
+    int count = 0;
+    if (only == -1) {
+	    /* start them all */
+      for (p = root; p != NULL; p = p->next) {
+  	    if (zero || (!zero && (p->parent != NULL))) {
+      		/* start T4s ? */
+		      if (T4 && bpw (p->tptype) == 4) {
+    		    count++;
+	    	    ((struct meminfo *) p->extra)->endmem = 2;
+		      }
+      		/* start T2s ? */
+      		if (T2 && bpw (p->tptype) == 2) {
+		        if (c4s) {
+        			count++;
+			        ((struct meminfo *) p->extra)->endmem = 2;
+		        } else {
+	        		for (i = 0; (class (p->linkno[i]) != C4) && (i < 4); i++);
+			        if (i == 4) {
+	      		    count++;
+			          ((struct meminfo *) p->extra)->endmem = 2;
+			        }
+		        }
+		      }
+	      }
+	      if (((struct meminfo *) p->extra)->endmem != 3) {
+          if (info) {
+      		  printf (" %d", p->tpid);
+      		}
+		      sendparams (TheLink, p, quick, endaddr);
+	      }
+	    }
+	  } else {
+	    /* only one to be tested */
+	    for (p = root; (p != NULL) && (p->tpid != only); p = p->next);
+	    if (p != NULL) {
 	      count++;
-	      ((struct meminfo *) p->extra)->endmem = 2;
-	      if (info)
-		printf (" %d", p->tpid);
+        ((struct meminfo *) p->extra)->endmem = 2;
+        if (info) {
+      		printf (" %d", p->tpid);
+        }
 	      sendparams (TheLink, p, quick, endaddr);
 	    }
-	  /*}}}  */
-	}
-
-      for (; ok && (count || soak); count--)
-	{
-	  int endmemory = FALSE;
-	  while (ok && !endmemory)	/* we havent received endmem  */
-	    {
-	      int delta = 0;
-	      /*{{{  logging */
-	      if (!(Kb2++ % (DOTSIZE / 2)))
-		{
-
-#ifdef MSC
-		  kbhit ();
-#endif
-
-		  if (logging)
-		    {
-		      if (Kb2 == ((DOTSIZE * 32) + 1))
-			{
-			  for (p = root; p != NULL; p = p->next)
-			    {
-			      q = (struct meminfo *) p->extra;
-			      if (q->error)
-				printresults (stderr, p, quick, extra);
-			    }
-			  fprintf (stderr, "\n<%5dMb> ", Mb);
-			  Mb += DOTSIZE / 16;
-			  Kb2 = 1;
-			}
-		      putc ('.', stderr);
-		      fflush (stderr);
-		    }
-		}
-	      /*}}}  */
-	      /*{{{  get results */
+	  }
+    for (; ok && (count || soak); count--) {
+  	  int endmemory = FALSE;
+  	  while (ok && !endmemory) { /* we havent received endmem  */
+        int delta = 0;
+	      /* logging */
+	      if (!(Kb2++ % (DOTSIZE / 2))) {
+          if (logging) {
+            if (Kb2 == ((DOTSIZE * 32) + 1)) {
+              for (p = root; p != NULL; p = p->next) {
+                q = (struct meminfo *) p->extra;
+                if (q->error) {
+                  printresults (stderr, p, quick, extra);
+                }
+              }
+              fprintf (stderr, "\n<%5dMb> ", Mb);
+              Mb += DOTSIZE / 16;
+              Kb2 = 1;
+            }
+            putc ('.', stderr);
+            fflush (stderr);
+          }
+        }
+	      /* get results */
 	      p = getresults (TheLink, root, &delta);
 	      ok = (p != NULL);
-	      if (ok)
-		{
-		  char terminator = '$';
-		  q = (struct meminfo *) p->extra;
-		  switch (q->endmem)
-		    {
-		    case 0:	/* still ok  */
-		    case 2:	/* ceiling  */
-		      if (!quick && delta)
-			{
-			  sprintf (&p->info[strlen (p->info)], "%luK,%d ",
-			       ((q->memsize - 2048l) - q->watermark) / 1024,
-				   q->memspeed - delta);
-			  q->watermark = q->memsize - 2048l;
-			}
-		    }
-		  if (q->endmem)
-		    {
-		      endmemory = TRUE;
-		      switch (q->endmem)
-			{
-			case 2:	/* ceiling  */
-			  terminator = '|';
-			  break;
-			case 1:	/* error  */
-			  terminator = '.';
-			  break;
-			case 255:	/* wrap  */
-			  terminator = ';';
-			  break;
-			}
-		      sprintf (&p->info[strlen (p->info)], "%luK",
-			       (q->memsize - q->watermark) / 1024);
-		      if (!quick)
-			sprintf (&p->info[strlen (p->info)], ",%d%c",
-				 q->memspeed, terminator);
-		      else
-			sprintf (&p->info[strlen (p->info)], "%c",
-				 terminator);
-		    }
-		}
-	      else
-		fprintf (stderr, "Failed to get results\n");
-	      /*}}}  */
-	    }			/* endmemory  */
-	  /*{{{  send params if soak  */
-	  if (soak)
-	    sendparams (TheLink, p, quick, endaddr);
-	  /*}}}  */
-	}			/* count */
-    }
-  /*{{{  print results  */
+	      if (ok) {
+          char terminator = '$';
+          q = (struct meminfo *) p->extra;
+          switch (q->endmem) {
+            case 0:	/* still ok  */
+            case 2:	/* ceiling  */
+              if (!quick && delta) {
+                sprintf (&p->info[strlen (p->info)], "%luK,%d ", ((q->memsize - 2048l) - q->watermark) / 1024, q->memspeed - delta);
+                q->watermark = q->memsize - 2048l;
+              }
+          }
+          if (q->endmem) {
+            endmemory = TRUE;
+            switch (q->endmem)
+            {
+              case 2:	/* ceiling  */
+                terminator = '|';
+              break;
+              case 1:	/* error  */
+                terminator = '.';
+              break;
+              case 255:	/* wrap  */
+                terminator = ';';
+              break;
+            }
+		        sprintf (&p->info[strlen (p->info)], "%luK", (q->memsize - q->watermark) / 1024);
+  		      if (!quick) {
+        			sprintf (&p->info[strlen (p->info)], ",%d%c", q->memspeed, terminator);
+        	  } else {
+        			sprintf (&p->info[strlen (p->info)], "%c", terminator);
+		        }
+		      }
+		    } else {
+      		fprintf (stderr, "Failed to get results\n");
+	      }
+	    }	/* endmemory */
+	    /* send params if soak */
+	    if (soak) {
+	      sendparams (TheLink, p, quick, endaddr);
+	    }
+	  }	/* count*/
+  } /* iteration */
+  /* print results  */
   root = sortid (root);
-  if (logging)
+  if (logging) {
     putc ('\n', stderr);
-  if (info)
+  }
+  if (info) {
     putc ('\n', stdout);
-  printf ("%s | %s %s\n%s RAM", Pipe, PROGRAM_NAME, VERSION_NUMBER,
-	  Banner);
-  if (!quick)
+  }
+  printf ("%s | %s %s\n%s RAM", Pipe, PROGRAM_NAME, VERSION_NUMBER, Banner);
+  if (!quick) {
     printf (",cycle");
-  for (p = root; p != NULL; p = p->next)
+  }
+  for (p = root; p != NULL; p = p->next) {
     printresults (stdout, p, quick, extra);
-  /*}}}  */
+  }
   CloseLink (TheLink);
   printf ("\n");
   return (0);
