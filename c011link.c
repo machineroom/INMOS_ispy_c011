@@ -5,6 +5,7 @@
  */
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <errno.h>
 #include <string.h>
 
@@ -236,7 +237,11 @@ uint32_t c011_read_bytes (uint8_t *bytes, uint32_t num, uint32_t timeout) {
 LINK
 OpenLink(char *Name)
 {
-	c011_init();
+    static bool open = FALSE;
+    if (!open) {
+    	c011_init();
+    	open = TRUE;
+    }
     return 1;
 }
 
