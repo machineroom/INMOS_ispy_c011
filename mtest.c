@@ -425,7 +425,7 @@ main (int argc, char *argv[])
   }
   /* load 'em up */
   if (info) {
-    printf ("# load");
+    printf ("# load\n");
   }
   for (p = root; (p != NULL) && ok; p = p->next) {
     if (zero || (!zero && (p->parent != NULL))) {
@@ -435,7 +435,7 @@ main (int argc, char *argv[])
           /* 16 bitters */
           if (T2) {
             if (info) {
-              printf (" T2 load %d", p->tpid);
+              printf (" T2 load %d\n", p->tpid);
             }
             stop (p);
             ok = load (TheLink, p,
@@ -447,7 +447,7 @@ main (int argc, char *argv[])
                        mtest16_code.Code);
           } else {
             if (info) {
-              printf ("ignoring T2 %d", p->tpid);
+              printf ("ignoring T2 %d\n", p->tpid);
             }
           }
         break;
@@ -455,7 +455,7 @@ main (int argc, char *argv[])
           /* 32 bitters */
           if (T4) {
             if (info) {
-              printf (" T4 load %d", p->tpid);
+              printf (" T4 load %d\n", p->tpid);
             }
             stop (p);
             ok = load (TheLink, p,
@@ -467,7 +467,7 @@ main (int argc, char *argv[])
                        mtest32_code.Code);
           } else {
             if (info) {
-              printf ("ignoring T4 %d", p->tpid);
+              printf ("ignoring T4 %d\n", p->tpid);
             }
           }
         }
