@@ -36,7 +36,7 @@ char *PROGRAM_NAME = "ispy";
 #define CREDITS         "by Andy Rabagliati <andyr@wizzy.com>\nchanges to work with Linux 3.x.x by John Snowdon <john.snowdon@newcastle.ac.uk>\n"
 #define WWW             "<URL https://github.com/megatron-uk/>"
 #define AUTRONICA       "originally for AUTRONICA, Trondheim, Norway"
-#define MyBanner "   # Part rate Link# [  Link0  Link1  Link2  Link3 ]"
+#define MyBanner "   # Part      B/s # [  Link0  Link1  Link2  Link3 ]"
 
 #include <stdio.h>
 #include <stdarg.h>
