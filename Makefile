@@ -13,7 +13,7 @@ CCLM            = $(CC)
 COPTSLM         = $(COPTS)
 LINKMODULE      = c011link
 DEFAULTLINK	= \"/dev/link0\"
-LINKOBJS        = $(LINKMODULE)$(O)
+LINKOBJS        = $(LINKMODULE)$(O) c011.o
 LINK            = gcc $(OPTIM)
 LIBRARIES       = -lbcm2835
 RM              = rm
@@ -88,8 +88,8 @@ hostend$(O):    hostend.c inmos.h \
 #  link code
 #
 
-$(LINKMODULE)$(O):      $(LINKMODULE).c inmos.h
-		$(CCLM) $(COPTSLM) $(LINKMODULE).c -o $(LINKMODULE)$(O)
+$(LINKMODULE)$(O):      $(LINKMODULE).c c011.c inmos.h
+		$(CCLM) $(COPTSLM) $(LINKMODULE).c c011.c -o $(LINKMODULE)$(O)
 
 			
 
