@@ -72,11 +72,12 @@ void c011_analyse(void) {
 
 int c011_write_byte(uint8_t byte, uint32_t timeout) {
     //wait for output ready
-    while ((c011_read_output_status() & 0x01) != 0x01 && timeout>0) {
-        bcm2835_delayMicroseconds(1000);
-        timeout--;
+    uint64_t timeout_us = timeout*1000;
+    while ((c011_read_output_status() & 0x01) != 0x01 && timeout_us>0) {
+        bcm2835_delayMicroseconds(1);
+        timeout_us--;
     }
-    if (timeout == 0) {
+    if (timeout_us == 0) {
         return -1;
     }
     //RS1=0, RS0=1
