@@ -26,25 +26,17 @@ static void set_control_output_pins(void) {
 }
 
 static void set_data_output_pins(void) {
-    bcm2835_gpio_fsel(D0, BCM2835_GPIO_FSEL_OUTP);
-    bcm2835_gpio_fsel(D1, BCM2835_GPIO_FSEL_OUTP);
-    bcm2835_gpio_fsel(D2, BCM2835_GPIO_FSEL_OUTP);
-    bcm2835_gpio_fsel(D3, BCM2835_GPIO_FSEL_OUTP);
-    bcm2835_gpio_fsel(D4, BCM2835_GPIO_FSEL_OUTP);
-    bcm2835_gpio_fsel(D5, BCM2835_GPIO_FSEL_OUTP);
-    bcm2835_gpio_fsel(D6, BCM2835_GPIO_FSEL_OUTP);
-    bcm2835_gpio_fsel(D7, BCM2835_GPIO_FSEL_OUTP);
+    //bits 9-0 output (001)
+    //%00001001001001001001001001001001
+    //    0   9   2   4   9   2   4   9
+    uint32_t word = 0x09249249;
+    bcm2835_peri_write (bcm2835_regbase(BCM2835_REGBASE_GPIO) + BCM2835_GPFSEL0/4, word);
 }
 
 static void set_data_input_pins(void) {
-    bcm2835_gpio_fsel(D0, BCM2835_GPIO_FSEL_INPT);
-    bcm2835_gpio_fsel(D1, BCM2835_GPIO_FSEL_INPT);
-    bcm2835_gpio_fsel(D2, BCM2835_GPIO_FSEL_INPT);
-    bcm2835_gpio_fsel(D3, BCM2835_GPIO_FSEL_INPT);
-    bcm2835_gpio_fsel(D4, BCM2835_GPIO_FSEL_INPT);
-    bcm2835_gpio_fsel(D5, BCM2835_GPIO_FSEL_INPT);
-    bcm2835_gpio_fsel(D6, BCM2835_GPIO_FSEL_INPT);
-    bcm2835_gpio_fsel(D7, BCM2835_GPIO_FSEL_INPT);
+    //bits 9-0 input (000)
+    uint32_t word = 0;
+    bcm2835_peri_write (bcm2835_regbase(BCM2835_REGBASE_GPIO) + BCM2835_GPFSEL0/4, word);
 }
         
 void c011_init(void) {
@@ -76,31 +68,6 @@ void c011_analyse(void) {
     bcm2835_delayMicroseconds (5*1000);
     bcm2835_gpio_write(ANALYSE, LOW);
     bcm2835_delayMicroseconds (5*1000);
-}
-
-void c011_enable_out_int(void) {
-    set_data_output_pins();
-    bcm2835_gpio_write_mask (1<<RS1 | 1<<RS0 | 0<<RW | 1<<CS,
-                             1<<RS1 | 1<<RS0 | 1<<RW | 1<<CS);
-    bcm2835_gpio_write_mask (1<<D1,
-                             1<<D7 | 1<<D6 | 1<<D5 | 1<<D4 | 1<<D3 | 1<<D2 | 1<<D1 | 1<<D0);
-
-    bcm2835_gpio_write(CS, LOW);
-    sleep_ns (TCSLCSH);
-    bcm2835_gpio_write(CS, HIGH);
-    sleep_ns (TCSHCSL);
-}
-
-void c011_enable_in_int(void) {
-    set_data_output_pins();
-    bcm2835_gpio_write_mask (1<<RS1 | 0<<RS0 | 0<<RW | 1<<CS,
-                             1<<RS1 | 1<<RS0 | 1<<RW | 1<<CS);
-    bcm2835_gpio_write_mask (1<<D1,
-                             1<<D7 | 1<<D6 | 1<<D5 | 1<<D4 | 1<<D3 | 1<<D2 | 1<<D1 | 1<<D0);
-    bcm2835_gpio_write(CS, LOW);
-    sleep_ns (TCSLCSH);
-    bcm2835_gpio_write(CS, HIGH);
-    sleep_ns (TCSHCSL);
 }
 
 int c011_write_byte(uint8_t byte, uint32_t timeout) {
@@ -140,35 +107,14 @@ int c011_write_byte(uint8_t byte, uint32_t timeout) {
 }
 
 static uint8_t read_c011(void) {
-    uint8_t d7,d6,d5,d4,d3,d2,d1,d0,byte;
     set_data_input_pins();
     bcm2835_gpio_write(CS, LOW);
     //must allow time for data valid after !CS
     sleep_ns (TCSLDrV);
     uint32_t reg = bcm2835_peri_read (bcm2835_regbase(BCM2835_REGBASE_GPIO) + BCM2835_GPLEV0/4);
-    d7=(reg & 1<<D7) != 0;
-    d6=(reg & 1<<D6) != 0;
-    d5=(reg & 1<<D5) != 0;
-    d4=(reg & 1<<D4) != 0;
-    d3=(reg & 1<<D3) != 0;
-    d2=(reg & 1<<D2) != 0;
-    d1=(reg & 1<<D1) != 0;
-    d0=(reg & 1<<D0) != 0;
-    byte = d7;
-    byte <<= 1;
-    byte |= d6;
-    byte <<= 1;
-    byte |= d5;
-    byte <<= 1;
-    byte |= d4;
-    byte <<= 1;
-    byte |= d3;
-    byte <<= 1;
-    byte |= d2;
-    byte <<= 1;
-    byte |= d1;
-    byte <<= 1;
-    byte |= d0;
+    uint8_t byte;
+    reg >>= 2;
+    byte = reg & 0xFF;
     bcm2835_gpio_write(CS, HIGH);
     sleep_ns (TCSHCSL);
     return byte;
@@ -191,11 +137,12 @@ uint8_t c011_read_output_status(void) {
 }
 
 int c011_read_byte(uint8_t *byte, uint32_t timeout) {
-    while ((c011_read_input_status() & 0x01) == 0x00 && timeout>0) {
-        bcm2835_delayMicroseconds(1000);
-        timeout--;
+    uint64_t timeout_us = timeout*1000;
+    while ((c011_read_input_status() & 0x01) == 0x00 && timeout_us>0) {
+        bcm2835_delayMicroseconds(1);
+        timeout_us--;
     }
-    if (timeout == 0) {
+    if (timeout_us == 0) {
         return -1;
     }
     bcm2835_gpio_write_mask (0<<RS1 | 0<<RS0 | 1<<RW | 1<<CS,
