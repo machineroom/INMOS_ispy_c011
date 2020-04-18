@@ -98,6 +98,7 @@ void c011_analyse(void) {
 int c011_write_byte(uint8_t byte, uint32_t timeout) {
     //wait for output ready
     uint64_t timeout_us = timeout*1000;
+    uint32_t word;
     while ((c011_read_output_status() & 0x01) != 0x01 && timeout_us>0) {
         bcm2835_delayMicroseconds(1);
         timeout_us--;
@@ -114,25 +115,12 @@ int c011_write_byte(uint8_t byte, uint32_t timeout) {
     set_gpio_bit (RW,0);
     set_gpio_bit (CS,1);
     gpio_commit();
-    //D0-D7
-    uint8_t d7,d6,d5,d4,d3,d2,d1,d0;
-    d7=(byte&0x80) >> 7;
-    d6=(byte&0x40) >> 6;
-    d5=(byte&0x20) >> 5;
-    d4=(byte&0x10) >> 4;
-    d3=(byte&0x08) >> 3;
-    d2=(byte&0x04) >> 2;
-    d1=(byte&0x02) >> 1;
-    d0=(byte&0x01) >> 0;
-    set_gpio_bit (D7,d7);
-    set_gpio_bit (D6,d6);
-    set_gpio_bit (D5,d5);
-    set_gpio_bit (D4,d4);
-    set_gpio_bit (D3,d3);
-    set_gpio_bit (D2,d2);
-    set_gpio_bit (D1,d1);
-    set_gpio_bit (D0,d0);
-    gpio_commit();
+    // 1111 1111 1111 1111   1111 1100 0000 0011
+    //clear bits 2-9 and OR in our byte
+    bits &= 0xFFFFFC03;
+    word = byte;
+    word <<= 2;
+    bits |= word;
     //CS=0
     set_gpio_bit(CS, LOW);
     gpio_commit();
