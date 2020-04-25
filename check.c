@@ -42,6 +42,7 @@ char *PROGRAM_NAME = "ispy";
 #include <stdarg.h>
 #include <stdlib.h>
 #include "linkio.h"
+#include "c011.h"
 
 /* for isatty */
 #ifdef MSDOS
@@ -106,14 +107,6 @@ static unsigned char SSRESETHI[] =
 static unsigned char SSRESETLO[] =
 {0,                             /* poke */
  0, 0, 0, 0,                    /* reset */
- 0, 0, 0, 0};                   /* de-asserted */
-static unsigned char SSANALYSEHI[] =
-{0,                             /* poke */
- 1, 0, 0, 0,                    /* analyse */
- 1, 0, 0, 0};                   /* asserted */
-static unsigned char SSANALYSELO[] =
-{0,                             /* poke */
- 1, 0, 0, 0,                    /* analyse */
  0, 0, 0, 0};                   /* de-asserted */
 
 static unsigned char BOOTSTRING[] =
@@ -223,6 +216,7 @@ void writeresults(struct tpstats * root, char *LinkName, int c4read, int kong)
 			}
 		}
 	}
+    c011_dump_stats ("probe complete");
 }
 
 void test_root_int_mem(const unsigned int bpw, const unsigned char byte_value)
