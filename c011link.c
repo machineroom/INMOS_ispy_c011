@@ -63,6 +63,10 @@ int
 ResetLink(LINK LinkId)
 {
     c011_reset();
+    //The whitecross HSL takes some time to cascade reset
+    sleep(2);
+    //Set Whitecross HSL to byte mode
+	c011_set_byte_mode();
     return SUCCEEDED;
 }
 

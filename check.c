@@ -216,7 +216,7 @@ void writeresults(struct tpstats * root, char *LinkName, int c4read, int kong)
 			}
 		}
 	}
-    c011_dump_stats ("probe complete");
+    //c011_dump_stats ("probe complete");
 }
 
 void test_root_int_mem(const unsigned int bpw, const unsigned char byte_value)

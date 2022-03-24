@@ -5,6 +5,8 @@ A slightly updated version of the old INMOS Transputer 'ispy' and 'mtest' tools 
 This set of tools has been modified slightly from the last release by  Andy Rabagliati (http://www.wizzy.com/wizzy/ispy.html), in order to work with modern versions of GCC and the updated kernel driver on Linux 3.x.x as available in my other repository (https://github.com/megatron-uk/INMOS-Link-Driver).
 
 ## Useage
+`sudo ./ispy -r | sudo ./mtest -i -t 1`
+
 
 Should build cleanly with GNU make and any modern version of GCC.
 
