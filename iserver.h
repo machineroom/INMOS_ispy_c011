@@ -22,14 +22,6 @@
 #define VERSION_ID     14
 
 
-
-
-#define TRANSACTION_BUFFER_SIZE	  1024
-#define MAX_SLICE_LENGTH	  (TRANSACTION_BUFFER_SIZE - 2 - 1)	   /*  largest data item in Tbuf  */
-
-#define BOOT_BUFFER_LENGTH	  (1024 * 8)
-
-#define DEFAULT_CORE_SIZE	  (1024 * 8)	/*  peeked at analyse  */
 #define TIMEOUT			  (10)					   /*  basic transaction timeout in 10ths of a second  */
 
 #define MAX_COMMAND_LINE_LENGTH	  512
@@ -38,59 +30,6 @@
 
 
 #define PEEK_TRANSPUTER		  1
-
-
-
-									   /*  primary server operation tags  */
-
-#define SP_ZERO	       0
-
-#define SP_OPEN	      10						   /*  filec.c	*/
-#define SP_CLOSE      11
-#define SP_READ	      12
-#define SP_WRITE      13
-#define SP_GETS	      14
-#define SP_PUTS	      15
-#define SP_FLUSH      16
-#define SP_SEEK	      17
-#define SP_TELL	      18
-#define SP_EOF	      19
-#define SP_FERROR     20
-#define SP_REMOVE     21
-#define SP_RENAME     22
-#define SP_GETBLOCK   23
-#define SP_PUTBLOCK   24
-
-#define SP_GETKEY     30						   /*  hostc.c	*/
-#define SP_POLLKEY    31
-#define SP_GETENV     32
-#define SP_TIME	      33
-#define SP_SYSTEM     34
-#define SP_EXIT	      35
-
-#define SP_COMMAND    40						   /*  serverc.c  */
-#define SP_CORE	      41
-#define SP_ID	      42
-
-#define SP_MSDOS      50   /*  msdos.c	*/
-
-/* NOT USED AT INMOS - MAY BE USED BY THIRD PARTY ???
-#define SP_SUN	      60
-#define SP_MSC	      61
-#define SP_VMS	      62
-*/
-
-#define SP_ALSYS      100  /* Not used by inmos iserver */
-#define SP_KPAR	      101  /* Not used by inmos iserver */
-
-									   /*  INMOS reserves all numbers up to 127  */
-
-
-
-
-#define SP_SUCCESS 0							   /*  operation results  */
-#define SP_UNIMPLEMENTED 1
-#define SP_ERROR 129
 
 									   /*  machine specific stuff  */
 #ifndef MSC
