@@ -114,8 +114,6 @@ RM              = rm
 OCCAM		= oc /y /a /n /k /v /e /w /h /T
 FIND            = grep
 
-# $(DB) -c "ilist /c type32.tco | perl tco2h.pl > type32.h" -c "exit"
-
 type32.h:       type32.occ checklib.occ 
 	    $(DB) -c "$(OCCAM)A type32" -c "ilist /c type32.tco > type32.tcl" -c "exit"
 		cat TYPE32.TCL | python3 tco2h.py > type32.h.new

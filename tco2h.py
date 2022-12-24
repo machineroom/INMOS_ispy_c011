@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+
+# Create a C header from an occam TCO listing
+import sys
+import string
+import re
+
+si =  sys.stdin.readlines()
+
+for line in si:
+    line = line.strip()
+    res = re.findall('origin: (.+)\.occ', line)
+    if res:
+        name = res[0]
+
+code_size = 284
+target = '"TA"'
+mode = '"Undefined"'
+offset = 0
+workspace = 27
+vectorspace = 0
+bpw = 4
+tcr = 392
+
+print (f"struct {name}_struct {{")
+print (f"\tunsigned char Code[{code_size}];")
+print ("\tchar Target[10];")
+print ("\tchar Mode[10];")
+print ("\tlong CodeSize;")
+print ("\tlong Offset;")
+print ("\tlong WorkSpace;")
+print ("\tlong VectorSpace;")
+print ("\tint  BytesPerWord;")
+print ("\tint  TotalSpace;")
+print ("\t};")
+
+print (f"struct {name}_struct {name}_code = {{")
+print ("\t{ /* code */\n")
+# HEX
+print ("\t},")
+print (f"\t{target},    /* target */")
+print (f"\t{mode},      /* mode */")
+print (f"\t{code_size},      /* code size */")
+print (f"\t{offset},      /* offset */")
+print (f"\t{workspace},      /* workspace */")
+print (f"\t{vectorspace},      /* vectorspace */")
+print (f"\t{bpw},      /* bytes per word */")
+print (f"\t{tcr},      /* total code requirement not including parameter space */")
+
