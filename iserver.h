@@ -31,7 +31,6 @@
 
 #define DEFAULT_CORE_SIZE	  (1024 * 8)	/*  peeked at analyse  */
 #define TIMEOUT			  (10)					   /*  basic transaction timeout in 10ths of a second  */
-#define BOOT_TIMEOUT		  (10)
 
 #define MAX_COMMAND_LINE_LENGTH	  512
 #define MAX_BOOT_FILE_LENGTH	  256
