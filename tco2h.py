@@ -12,20 +12,16 @@ for line in si:
     res = re.findall('origin: (.+)\.occ', line)
     if res:
         name = res[0]
-    res = re.findall('ws: (.\d)', line)
+    res = re.findall('ws: (\d+)', line)
     if res:
         workspace = res[0]
-    res = re.findall('ws: (.\d)', line)
+    res = re.findall('LOAD_TEXT bytes: (\d+)', line)
     if res:
-        workspace = res[0]
+        code_size = int(res[0]) + 4
 
-code_size = 284
-target = '"TA"'
-mode = '"Undefined"'
 offset = 0
 vectorspace = 0
 bpw = 4
-tcr = 392
 
 print (f"struct {name}_struct {{")
 print (f"\tunsigned char Code[{code_size}];")
@@ -44,5 +40,5 @@ print (f"\t{code_size},      /* code size */")
 print (f"\t{offset},      /* offset */")
 print (f"\t{workspace},      /* workspace */")
 print (f"\t{vectorspace},      /* vectorspace */")
-print (f"\t{bpw},      /* bytes per word */")
-
+print (f"\t{bpw}      /* bytes per word */")
+print ("};")
