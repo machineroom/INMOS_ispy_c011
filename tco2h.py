@@ -15,13 +15,20 @@ for line in si:
     res = re.findall('ws: (\d+)', line)
     if res:
         workspace = res[0]
+    res = re.findall('vs: (\d+)', line)
+    if res:
+        vectorspace = res[0]
     res = re.findall('LOAD_TEXT bytes: (\d+)', line)
     if res:
-        code_size = int(res[0]) + 4
+        code_size = int(res[0])
+    res = re.findall('BIT32', line)
+    if res:
+        bpw = 4
+    res = re.findall('BIT16', line)
+    if res:
+        bpw = 2
 
 offset = 0
-vectorspace = 0
-bpw = 4
 
 print (f"struct {name}_struct {{")
 print (f"\tunsigned char Code[{code_size}];")
