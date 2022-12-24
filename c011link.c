@@ -9,7 +9,6 @@
 #include <errno.h>
 #include <string.h>
 
-#include "link-driver.h"
 #include "linkio.h"
 #include "inmos.h"
 #include "iserver.h"
@@ -66,7 +65,7 @@ ResetLink(LINK LinkId)
     //The whitecross HSL takes some time to cascade reset
     sleep(2);
     //Set Whitecross HSL to byte mode
-	c011_set_byte_mode();
+    c011_set_byte_mode();
     return SUCCEEDED;
 }
 
