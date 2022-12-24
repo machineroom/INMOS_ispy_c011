@@ -38,7 +38,7 @@ clean:
 #  ispy
 #
 
-ispy$(E):      check$(O) cklib$(O) $(LINKOBJS)
+ispy$(E):      check$(O) cklib$(O) $(LINKOBJS) 
 		$(LINK) -o ispy$(E) check$(O) cklib$(O) $(LINKOBJS) $(LIBRARIES)
 
 check$(O):      check.c checklib.h inmos.h cklib.h \
@@ -97,35 +97,49 @@ c011.o:
 #  end of C makefile
 #
 #
-#RM              = rm
-#OCCAM		= oc -y -a -n -k -v -e -w -h -T
-#FIND            = grep
-#
-#
-#type32.h:       type32.occ checklib.occ 
-#		$(OCCAM)A type32
-#		ilist -c type32.tco | perl tco2h.pl > type32.h
-#		$(FIND) "total code requirement"  type32.h
-#		$(RM) type32.tco
-#
+
+D7305A=$(HOME)/d7305a/install/D7305A
+
+#note that D7205A toolset runs much of toolchain on a transputer.... I dont have a DOS PC with B008 so this won't work!
+#D7305A is almost all PC hosted but objects to the Occam code. /A cmd line switch disables the offending checks (I assume this enables "D7205 mode")
+DB=dosbox\
+	-c "mount D $(shell pwd)"\
+	-c "mount E $(D7305A)"\
+	-c "PATH=Z:;e:\tools"\
+	-c "SET ISEARCH=e:\libs\\"\
+	-c "D:"
+
+RM              = rm
+# Note /T must come last! 'A' or '2' is appended
+OCCAM		= oc /y /a /n /k /v /e /w /h /T
+FIND            = grep
+
+# $(DB) -c "ilist /c type32.tco | perl tco2h.pl > type32.h" -c "exit"
+
+type32.h:       type32.occ checklib.occ 
+	    $(DB) -c "$(OCCAM)A type32" -c "ilist /c type32.tco > type32.tcl" -c "exit"
+		cat TYPE32.TCL | python3 tco2h.py > type32.h.new
+		$(FIND) "total code requirement" type32.h
+		$(RM) TYPE32.TCO
+
 #type16.h:       type16.occ checklib.occ 
-#		$(OCCAM)2 type16
-#		ilist -c type16.tco | perl tco2h.pl > type16.h
+#		$(DB) -c "$(OCCAM)2 type16" -c "exit"
+#		$(DB) -c "ilist /c type16.tco | perl tco2h.pl > type16.h" -c "exit"
 #		$(FIND) "total code requirement" < type16.h
-#		$(RM) type16.tco
-#
+#		$(RM) TYPE16.TCO
+
 #check32.h:      check32.occ checklib.occ 
-#		$(OCCAM)A check32
-#		ilist -c check32.tco | perl tco2h.pl > check32.h
+#		$(DB) -c "$(OCCAM)A check32" -c "exit"
+#		$(DB) -c "ilist -c check32.tco | perl tco2h.pl > check32.h" -c "exit"
 #		$(FIND) "total code requirement" < check32.h
-#		$(RM) check32.tco
-#
+#		$(RM) CHECK32.TCO
+
 #check16.h:      check16.occ checklib.occ 
-#		$(OCCAM)2 check16
-#		ilist -c check16.tco | perl tco2h.pl > check16.h
-#		$(FIND) "total code requirement" < check16.h
-#		$(RM) check16.tco
-#
+#		$(DB) -c "$(OCCAM)2 check16" -c "exit"
+#		$(DB) -c "ilist -c check16.tco | perl tco2h.pl > check16.h" -c "exit"
+#		$(FIND) "total code requirement" < CHECK16.H
+#		$(RM) CHECK16.TCO
+
 # c00432.h:       c00432.occ checklib.occ 
 # 		$(OCCAM)A c00432
 # 		ilist -c c00432.tco | perl tco2h.pl > c00432.h
