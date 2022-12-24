@@ -5,28 +5,26 @@ import sys
 import string
 import re
 
-si =  sys.stdin.readlines()
+si =  sys.stdin.read()
 
-for line in si:
-    line = line.strip()
-    res = re.findall('origin: (.+)\.occ', line)
-    if res:
-        name = res[0]
-    res = re.findall('ws: (\d+)', line)
-    if res:
-        workspace = res[0]
-    res = re.findall('vs: (\d+)', line)
-    if res:
-        vectorspace = res[0]
-    res = re.findall('LOAD_TEXT bytes: (\d+)', line)
-    if res:
-        code_size = int(res[0])
-    res = re.findall('BIT32', line)
-    if res:
-        bpw = 4
-    res = re.findall('BIT16', line)
-    if res:
-        bpw = 2
+res = re.findall('origin: (.+)\.occ', si)
+if res:
+    name = res[0]
+res = re.findall('ws: (\d+)', si)
+if res:
+    workspace = res[0]
+res = re.findall('vs: (\d+)', si)
+if res:
+    vectorspace = res[0]
+res = re.findall('LOAD_TEXT bytes: (\d+)', si)
+if res:
+    code_size = int(res[0])
+res = re.findall('BIT32', si)
+if res:
+    bpw = 4
+res = re.findall('BIT16', si)
+if res:
+    bpw = 2
 
 offset = 0
 
