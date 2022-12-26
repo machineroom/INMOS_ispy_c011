@@ -5,11 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            ""
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${file} TYPE32.TCL",
+            "program": "${file}",
+            "args": ["TYPE32.TCL"],
             "console": "integratedTerminal",
             "justMyCode": true
         }

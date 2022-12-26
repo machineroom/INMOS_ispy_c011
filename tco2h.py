@@ -5,8 +5,7 @@ import sys
 import string
 import re
 
-#si = sys.stdin.read()
-with open('TYPE32.TCL') as f:
+with open(sys.argv[1]) as f:
     si = f.read()
 
 res = re.findall('origin: (.+)\.occ', si)
