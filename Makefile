@@ -115,28 +115,28 @@ OCCAM		= oc /y /a /n /k /v /e /w /h /T
 FIND            = grep
 
 type32.h:       type32.occ checklib.occ 
-	    $(DB) -c "$(OCCAM)A type32" -c "ilist /c type32.tco > type32.tcl" -c "exit"
-		cat TYPE32.TCL | tco2h.py > type32.h.new
-		$(FIND) "total code requirement" type32.h
+	    	$(DB) -c "$(OCCAM)A type32" -c "ilist /c type32.tco > type32.tcl" -c "exit"
+		./tco2h.py TYPE32.TCL > type32.h
+	        $(FIND) "code size" < type32.h
 		$(RM) TYPE32.TCO
 
 type16.h:       type16.occ checklib.occ 
 		$(DB) -c "$(OCCAM)2 type16" -c "ilist /c type16.tco > type16.tcl" -c "exit"
-		cat TYPE16.TCL | tco2h.py > type16.h.new
-		$(FIND) "total code requirement" < type16.h
+		./tco2h.py TYPE16.TCL > type16.h
+		$(FIND) "code size" < type16.h
 		$(RM) TYPE16.TCO
 
-#check32.h:      check32.occ checklib.occ 
-#		$(DB) -c "$(OCCAM)A check32" -c "exit"
-#		$(DB) -c "ilist -c check32.tco | perl tco2h.pl > check32.h" -c "exit"
-#		$(FIND) "total code requirement" < check32.h
-#		$(RM) CHECK32.TCO
+check32.h:      check32.occ checklib.occ 
+		$(DB) -c "$(OCCAM)A check32" -c "ilist /c check32.tco > check32.tcl" -c "exit"
+		./tco2h.py CHECK32.TCL > check32.h
+		$(FIND) "code size" < check32.h
+		$(RM) CHECK32.TCO
 
-#check16.h:      check16.occ checklib.occ 
-#		$(DB) -c "$(OCCAM)2 check16" -c "exit"
-#		$(DB) -c "ilist -c check16.tco | perl tco2h.pl > check16.h" -c "exit"
-#		$(FIND) "total code requirement" < CHECK16.H
-#		$(RM) CHECK16.TCO
+check16.h:      check16.occ checklib.occ 
+		$(DB) -c "$(OCCAM)2 check16" -c "ilist /c check16.tco > check16.tcl" -c "exit"
+		./tco2h.py CHECK16.TCL > check16.h
+		$(FIND) "code size" < check16.h
+		$(RM) CHECK16.TCO
 
 # c00432.h:       c00432.occ checklib.occ 
 # 		$(OCCAM)A c00432
