@@ -116,15 +116,15 @@ FIND            = grep
 
 type32.h:       type32.occ checklib.occ 
 	    $(DB) -c "$(OCCAM)A type32" -c "ilist /c type32.tco > type32.tcl" -c "exit"
-		cat TYPE32.TCL | python3 tco2h.py > type32.h.new
+		cat TYPE32.TCL | tco2h.py > type32.h.new
 		$(FIND) "total code requirement" type32.h
 		$(RM) TYPE32.TCO
 
-#type16.h:       type16.occ checklib.occ 
-#		$(DB) -c "$(OCCAM)2 type16" -c "exit"
-#		$(DB) -c "ilist /c type16.tco | perl tco2h.pl > type16.h" -c "exit"
-#		$(FIND) "total code requirement" < type16.h
-#		$(RM) TYPE16.TCO
+type16.h:       type16.occ checklib.occ 
+		$(DB) -c "$(OCCAM)2 type16" -c "ilist /c type16.tco > type16.tcl" -c "exit"
+		cat TYPE16.TCL | tco2h.py > type16.h.new
+		$(FIND) "total code requirement" < type16.h
+		$(RM) TYPE16.TCO
 
 #check32.h:      check32.occ checklib.occ 
 #		$(DB) -c "$(OCCAM)A check32" -c "exit"

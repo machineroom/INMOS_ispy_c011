@@ -5,7 +5,7 @@ import sys
 import string
 import re
 
-si =  sys.stdin.read()
+si = sys.stdin.read()
 
 res = re.findall('origin: (.+)\.occ', si)
 if res:
@@ -16,15 +16,19 @@ if res:
 res = re.findall('vs: (\d+)', si)
 if res:
     vectorspace = res[0]
-res = re.findall('LOAD_TEXT bytes: (\d+)', si)
-if res:
-    code_size = int(res[0])
 res = re.findall('BIT32', si)
 if res:
     bpw = 4
 res = re.findall('BIT16', si)
 if res:
     bpw = 2
+res = re.findall('LOAD_TEXT bytes: (\d+)', si)
+if res:
+    code_size = int(res[0])
+    res2 = re.match('LOAD_TEXT bytes: \d+', si, re.MULTILINE | re.DEBUG)
+    print (res2)
+#000000BB 2060B221 204421FB D424F2DA 24F251DB       `.! D!..$..$.Q.
+    
 
 offset = 0
 
