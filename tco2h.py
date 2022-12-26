@@ -5,7 +5,9 @@ import sys
 import string
 import re
 
-si = sys.stdin.read()
+#si = sys.stdin.read()
+with open('TYPE32.TCL') as f:
+    si = f.read()
 
 res = re.findall('origin: (.+)\.occ', si)
 if res:
@@ -22,13 +24,28 @@ if res:
 res = re.findall('BIT16', si)
 if res:
     bpw = 2
-res = re.findall('LOAD_TEXT bytes: (\d+)', si)
+
+code = ''
+# lines after LOAD_TEXT are the hex to be extracted
+res = re.search('LOAD_TEXT bytes: (\d+)', si, re.MULTILINE)
 if res:
-    code_size = int(res[0])
-    res2 = re.match('LOAD_TEXT bytes: \d+', si, re.MULTILINE | re.DEBUG)
-    print (res2)
-#000000BB 2060B221 204421FB D424F2DA 24F251DB       `.! D!..$..$.Q.
+    code_size = int(res.groups()[0])
+    todo = code_size
+    remaining = si[res.span()[1]:]
+    lines = remaining.splitlines()
+    for line in lines:
+        line = line.strip()
+        m = re.match('([a-fA-F0-9]{8})([\sa-fA-F0-9]+)\s{6}', line)
+        if m:
+            addr = m.groups()[0]
+            val = m.groups()[1]
+            val = ''.join(val.split())
+            code += val
+            todo -= len(val)/2
+            if todo == 0:
+                break
     
+code = bytes.fromhex(code)
 
 offset = 0
 
@@ -42,7 +59,18 @@ print ("\tint  BytesPerWord;")
 print ("\t};")
 
 print (f"struct {name}_struct {name}_code = {{")
-print ("\t{ /* code */\n")
+print ("\t{ /* code */")
+i=1
+for byte in code:
+    if i < code_size:
+        print("0x%02X" % byte, end=',')
+        if i>0 and i%16==0:
+            print ("")
+        elif i>0 and i%4==0:
+            print ("", end=' ')
+    else:
+        print("0x%02X" % byte, end='')
+    i+=1
 # HEX
 print ("\t},")
 print (f"\t{code_size},      /* code size */")
