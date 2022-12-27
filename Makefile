@@ -6,24 +6,26 @@ COPTS           = -Wall
 OPTIM           = -O2
 CC              = gcc -c $(OPTIM) $(COPTS)
 LINKOBJS        = c011link.o c011.o
+LINKHEADERS     = c011.h
 LINK            = gcc $(OPTIM)
 LIBRARIES       = -lbcm2835
 
 all:     ispy mtest
-check.c: type16.h type32.h check16.h check32.h
-mtest.c: mtest16.h mtest32.h 
+
+check.o: type16.h type32.h check16.h check32.h
+mtest.o: mtest16.h mtest32.h
 
 clean:
 		rm -f *.o ispy mtest check??.h type??.h
 
-ispy:      check.o cklib.o $(LINKOBJS) 
+ispy:      check.o cklib.o $(LINKOBJS) $(LINKHEADERS)
 		$(LINK) -o ispy check.o cklib.o $(LINKOBJS) $(LIBRARIES)
 
-mtest:      mtest.o cklib.o $(LINKOBJS) mtest16.h mtest32.h
+mtest:      mtest.o cklib.o $(LINKOBJS) $(LINKHEADERS)
 		$(LINK) -o mtest mtest.o cklib.o $(LINKOBJS) $(LIBRARIES)
 
 %.o : %.c
-		$(CC) -o $@ $^
+		$(CC) -o $@ $<
 
 #
 #  end of C makefile
