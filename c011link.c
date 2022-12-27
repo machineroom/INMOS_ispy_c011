@@ -12,7 +12,6 @@
 
 #include "linkio.h"
 #include "inmos.h"
-#include "iserver.h"
 #include "c011.h"
 
 

@@ -37,18 +37,6 @@ char *PROGRAM_NAME = "mtest";
 #include <string.h>
 #include <stdarg.h>
 
-#ifdef MSDOS
-#include "linkio.h"
-#endif
-
-/*
-   #ifdef HELIOS
-   #include <stdlib.h>
-   #else
-   #include <Malloc.h>
-   #endif
- */
-
 #include <stdlib.h>		/* for atoi  */
 
 #include "inmos.h"

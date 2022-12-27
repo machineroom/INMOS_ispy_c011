@@ -31,8 +31,8 @@
 
 char *PROGRAM_NAME = "ispy";
 
-#define VERSION_NUMBER  "3.25"
-#define VERSION_DATE    "January 2016"
+#define VERSION_NUMBER  "4.00"
+#define VERSION_DATE    "2022"
 #define CREDITS         "by Andy Rabagliati <andyr@wizzy.com>\nchanges to work with Linux 3.x.x by John Snowdon <john.snowdon@newcastle.ac.uk>\n"
 #define WWW             "<URL https://github.com/megatron-uk/>"
 #define AUTRONICA       "originally for AUTRONICA, Trondheim, Norway"
@@ -45,20 +45,14 @@ char *PROGRAM_NAME = "ispy";
 #include "c011.h"
 
 /* for isatty */
-#ifdef MSDOS
-#include <io.h>
-#else
 #ifndef isatty
 #include <unistd.h>
-#endif
 #endif
 #include <ctype.h>
 #include <malloc.h>
 #include <string.h>
 
 #include "inmos.h"
-#include "iserver.h"
-#undef PROGRAM_NAME         /* remove one defined in iserver.h */
 #include "checklib.h"
 #include "cklib.h"
 
@@ -66,6 +60,8 @@ char *PROGRAM_NAME = "ispy";
 #include "type32.h"
 #include "check16.h"
 #include "check32.h"
+
+#define TIMEOUT			  (10)					   /*  basic transaction timeout in 10ths of a second  */
 
 #define SWITCHAR 	'-'
 #define SEGSIZE  	511
@@ -744,67 +740,6 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
                     }
                 }
             }
-#if 0 /* cannot test this */
-            if (c4) {
-                if (information)
-                    INFO(("# C004s "));
-                stop(p);
-                switch (bpw(p->tptype)) {
-                case 2:
-                    load(TheLink, p,
-                        c00416_code.CodeSize,
-                        c00416_code.Offset,
-                        c00416_code.WorkSpace,
-                        c00416_code.VectorSpace,
-                        c00416_code.BytesPerWord,
-                        c00416_code.Code);
-                    break;
-                case 4:
-                    load(TheLink, p,
-                        c00432_code.CodeSize,
-                        c00432_code.Offset,
-                        c00432_code.WorkSpace,
-                        c00432_code.VectorSpace,
-                        c00432_code.BytesPerWord,
-                        c00432_code.Code);
-                    break;
-                }
-                sendid(p);
-                if (c4reset) {
-                    int reset;
-                    unsigned char command[2];
-                    int i, j, sum = 0;
-                    for (i = 0, reset = FALSE;
-                        (!reset) && (i < 4); i++) {
-                        if (p-> linkno[i] == C4) {
-                            sum = checksum(p, i);
-                            for (j = 0;
-                                (sum != c004s[j]) && (j < c004count); j++);
-                            if (j == c004count)
-                                reset = TRUE;
-                        }
-                    }
-                    if (reset) {
-                        i--; /* undo 'for' increment */
-                        if (information)
-                            INFO(("# Reset C004 %d\n", p-> links[i] - > tpid));
-                        setroute(TheLink, p, 4); /* application */
-                        command[1] = (unsigned char) i;
-                        command[0] = '\4';
-                        sendiserver(TheLink, 2, command); /* reset */
-                        c004s[c004count++] = sum;
-                        while (root->next != NULL) {
-                            for (p = root;
-                                (p->next != NULL) && (p->next->next != NULL); p = p->next);
-                            free(p->next);
-                            p-> next = NULL;
-                        }
-                        free(root);
-                    }
-                    success = !reset;
-                }
-            } else
-# endif
             success = TRUE;
             if (success) {
                 success = nextcandidate( & p, & parent);
@@ -867,13 +802,8 @@ void getparams(int argc, char *argv[],
     {
 	argv++;
 	c = *argv;
-#ifdef MSDOS
-	if ((*c != '-') && (*c != '/'))
-	    Usage();
-#else
 	if (*c != SWITCHAR)
 	    Usage();
-#endif
 	++c;
 	switch (*c)
 	{
