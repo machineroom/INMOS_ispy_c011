@@ -6,8 +6,6 @@
 
 #define _LINKIO_H_
 
-#define NULL_LINK -1
-
 #define SUCCEEDED	 0
 #define ER_LINK_BAD	-1
 #define ER_LINK_CANT	-2
