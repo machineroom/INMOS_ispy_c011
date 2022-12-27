@@ -78,6 +78,8 @@ char *PROGRAM_NAME = "ispy";
 #define DEBUG(x) { if (CocoPops) { fputs("(", stdout); printf x; fputs(")", stdout); fputc((VerboseSwitch ? '\n' : ' '), stdout); fflush(stdout); } }
 #define INFO(x) { if (VerboseSwitch) printf x ; fflush(stdout); }
 
+#define DEFAULTLINK	"/dev/link0"
+
 void Usage(void)
 {
 	printf("\nUsage:  %s [%coption...] [ < file ]    --  version %s of %s.\n\n", PROGRAM_NAME, SWITCHAR, VERSION_NUMBER, VERSION_DATE);
