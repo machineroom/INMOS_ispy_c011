@@ -20,28 +20,12 @@
 #define _INMOS_H
 #endif
 
-#ifndef BYTE
-#define BYTE unsigned char
-#endif
-#define BOOL int
-
-#define INT32 int
-
 #ifndef TRUE
 #define TRUE 1
 #endif
 #ifndef FALSE
 #define FALSE 0
 #endif
-
-#ifndef PUBLIC
-#define PUBLIC
-#endif
-#ifndef PRIVATE
-#define PRIVATE static
-#endif
-#define VOID void
-#define EXTERN extern
 
 #define LINK int
 

@@ -54,7 +54,7 @@ int		lex(FILE * stream, struct tpstats ** root,
 				  char *Pipe, char *LinkName, char *Banner);
 struct tpstats *find(struct tpstats * root, int id);
 int		readtp(char *tputer);
-EXTERN char    *tptostr(int tp);
+extern char    *tptostr(int tp);
 int		writeup(struct tpstats * p, int c4read, int comment);
 						/* writes one line */
 void		writeC4(struct c4stats * q);	/* C004 shorthand */
@@ -64,13 +64,13 @@ void		writeCl(struct c4stats * q);	/* C004 longhand */
  * definitions for loader fns
  ***********************************************************/
 
-EXTERN LINK	OpenLink(char *Name);
-EXTERN int	CloseLink(LINK LinkId);
-EXTERN int	ReadLink(LINK LinkId, unsigned char *Buffer, unsigned int Count, int Timeout);
-EXTERN int	WriteLink(LINK LinkId, unsigned char *Buffer, unsigned int Count, int Timeout);
-EXTERN int	ResetLink(LINK LinkId);
-EXTERN int	AnalyseLink(LINK LinkId);
-EXTERN int	TestError(LINK LinkId);
+extern LINK	OpenLink(char *Name);
+extern int	CloseLink(LINK LinkId);
+extern int	ReadLink(LINK LinkId, unsigned char *Buffer, unsigned int Count, int Timeout);
+extern int	WriteLink(LINK LinkId, unsigned char *Buffer, unsigned int Count, int Timeout);
+extern int	ResetLink(LINK LinkId);
+extern int	AnalyseLink(LINK LinkId);
+extern int	TestError(LINK LinkId);
 
 int		readbytes(LINK TheLink,
 			  unsigned char *string, unsigned int maxlength);

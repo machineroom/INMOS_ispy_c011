@@ -5,8 +5,9 @@
 COPTS           = -Wall
 OPTIM           = -O2
 CC              = gcc -c $(OPTIM) $(COPTS)
+HEADERS			= cklib.h inmos.h boot.h linkio.h
 LINKOBJS        = c011link.o c011.o
-LINKHEADERS     = c011.h
+LINKHEADERS     = c011.h pins.h
 LINK            = gcc $(OPTIM)
 LIBRARIES       = -lbcm2835
 
@@ -18,10 +19,10 @@ mtest.o: mtest16.h mtest32.h
 clean:
 		rm -f *.o ispy mtest check??.h type??.h
 
-ispy:      check.o cklib.o $(LINKOBJS) $(LINKHEADERS)
+ispy:      check.o cklib.o $(LINKOBJS) $(LINKHEADERS) $(HEADERS)
 		$(LINK) -o ispy check.o cklib.o $(LINKOBJS) $(LIBRARIES)
 
-mtest:      mtest.o cklib.o $(LINKOBJS) $(LINKHEADERS)
+mtest:      mtest.o cklib.o $(LINKOBJS) $(LINKHEADERS) $(HEADERS)
 		$(LINK) -o mtest mtest.o cklib.o $(LINKOBJS) $(LIBRARIES)
 
 %.o : %.c
