@@ -25,21 +25,7 @@
 #endif
 #define BOOL int
 
-#ifdef MSC
-#define INT32 long
-#else
 #define INT32 int
-#endif
-
-/*#ifdef sun3
-#define BIG_ENDIAN
-#else
-#ifdef sun4
-#define BIG_ENDIAN
-#else
-#define LITTLE_ENDIAN
-#endif
-#endif*/
 
 #ifndef TRUE
 #define TRUE 1
