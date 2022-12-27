@@ -23,9 +23,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
-#ifndef atoi
 #include <stdlib.h>
-#endif
 #include <malloc.h>
 
 #include "linkio.h"
@@ -35,10 +33,7 @@
 
 #define TIMEOUT 40
 #define SEGSIZE 511
-#define MAXINT	((unsigned)-1)
 #define EMPTY ' '
-
-#define SWITCHAR '-'
 
 static char    *TPIDS[] = {"???", "?1/2?", "DISK", "HOST", "T???",
 	 "?T16", "?T32", "T16", "T32", "C004", "M212", "T2", "T414", "T800",
@@ -469,11 +464,11 @@ struct tpstats *find(struct tpstats * root, int id)
 /*{{{  char	      *tptostr(int tp) */
 char	       *tptostr(int tp)
 {
-    static char	    buffer[8];
+    static char	    buffer[12];
     if ((tp / 10) < NUMTPIDS)
 	strcpy(buffer, (TPIDS[(class(tp) / 10) + TPOFFSET]));
     else
-	sprintf(buffer, "T#%-2d", tp / 10);
+	snprintf(buffer, sizeof(buffer),"T#%-2d", tp / 10);
     if (tp >= (-50))
     {
 	buffer[4] = (char) 'a' + (tp - class(tp));

@@ -61,13 +61,11 @@ char *PROGRAM_NAME = "ispy";
 #include "check16.h"
 #include "check32.h"
 
-#define TIMEOUT			  (10)					   /*  basic transaction timeout in 10ths of a second  */
+#define LINK_WRITE_TIMEOUT			  (10)					   /*  basic transaction timeout in 10ths of a second  */
 
 #define SWITCHAR 	'-'
-#define SEGSIZE  	511
 #define EMPTY   	(-1)
 #define MAXLENGTH 	1024          /* maximum route length */
-#define PERLINE 	9
 #define CocoPops        0
 #define VerboseSwitch   1
 
@@ -234,7 +232,7 @@ void test_root_int_mem(const unsigned int bpw, const unsigned char byte_value)
     buffer[i++] = byte_value;
   for (i = 0; i < 2048; i += bpw)
   {
-    WriteLink(TheLink, &buffer[3], (2 * bpw) + 1, TIMEOUT);
+    WriteLink(TheLink, &buffer[3], (2 * bpw) + 1, LINK_WRITE_TIMEOUT);
       if (!(buffer[4] += bpw))
 	buffer[5]++;
   }
@@ -247,7 +245,7 @@ void test_root_int_mem(const unsigned int bpw, const unsigned char byte_value)
     unsigned int byte_count;
     unsigned char mem_value[4];
 
-    WriteLink(TheLink, &buffer[3], bpw + 1, TIMEOUT);
+    WriteLink(TheLink, &buffer[3], bpw + 1, LINK_WRITE_TIMEOUT);
     readbytes(TheLink, mem_value, bpw);
     if (!(buffer[4] += bpw))
 	buffer[5]++;
@@ -263,7 +261,7 @@ int findtype(void) {
 	int             type = 0;
 	char            bpw;
 	
-	bytes = WriteLink(TheLink, BOOTSTRING, sizeof(BOOTSTRING), TIMEOUT);
+	bytes = WriteLink(TheLink, BOOTSTRING, sizeof(BOOTSTRING), LINK_WRITE_TIMEOUT);
 	if (bytes == sizeof(BOOTSTRING)) 
         {
 		int count = 0;
@@ -329,7 +327,7 @@ void ramtest(struct tpstats * p, int link) {
 			testcommand[2] = TAG_TEST32;
 			break;
 	}
-	if (WriteLink(TheLink, testcommand, 3, TIMEOUT) != 3) {
+	if (WriteLink(TheLink, testcommand, 3, LINK_WRITE_TIMEOUT) != 3) {
 		writeresults(root, LinkName, c4read, kong);
 		AbortExit(PROGRAM_NAME, "Partial results : Timed out sending RAMTEST to processor %d", p->tpid);
 	}
@@ -338,7 +336,7 @@ void ramtest(struct tpstats * p, int link) {
 void linkspeed(struct tpstats * p){
 	static unsigned char LINKSPEED[] = {0xFF, 0xFF, TAG_LSPEED};
 	setroute(TheLink, p->parent, p->route);
-	if (WriteLink(TheLink, LINKSPEED, 3, TIMEOUT) == 3){
+	if (WriteLink(TheLink, LINKSPEED, 3, LINK_WRITE_TIMEOUT) == 3){
 		return;
 	} else {
 		writeresults(root, LinkName, c4read, kong);
@@ -535,7 +533,7 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
             if (information) {
                 INFO((", re"));
             }
-            if (WriteLink(TheLink, SSRESETLO, sizeof(SSRESETLO), TIMEOUT) != sizeof(SSRESETLO)) {
+            if (WriteLink(TheLink, SSRESETLO, sizeof(SSRESETLO), LINK_WRITE_TIMEOUT) != sizeof(SSRESETLO)) {
                 AbortExit(PROGRAM_NAME, "Failed to reset Subsystem port");
             }
             for (delay = 0; delay < 100000; delay++) {
@@ -544,7 +542,7 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
             if (information) {
                 INFO(("set"));
             }
-            if (WriteLink(TheLink, SSRESETHI, sizeof(SSRESETHI), TIMEOUT) != sizeof(SSRESETHI)) {
+            if (WriteLink(TheLink, SSRESETHI, sizeof(SSRESETHI), LINK_WRITE_TIMEOUT) != sizeof(SSRESETHI)) {
                 AbortExit(PROGRAM_NAME, "Failed to reset Subsystem port");
             }
             for (delay = 0; delay < 1000000; delay++) {
@@ -553,7 +551,7 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
             if (information) {
                 INFO((" subsystem"));
             }
-            if (WriteLink(TheLink, SSRESETLO, sizeof(SSRESETLO), TIMEOUT) != sizeof(SSRESETLO)) {
+            if (WriteLink(TheLink, SSRESETLO, sizeof(SSRESETLO), LINK_WRITE_TIMEOUT) != sizeof(SSRESETLO)) {
                 AbortExit(PROGRAM_NAME, "Failed to reset Subsystem port");
             }
             for (delay = 0; delay < 100000; delay++) {
@@ -638,7 +636,7 @@ void check(int subsys, int c4read, int c4reset, int information, int do_reset) {
                 unsigned char * buffer;
                 unsigned int tmp;
                 buffer = (unsigned char * ) Malloc(257);
-                tmp = WriteLink(TheLink, buffer, 257, TIMEOUT);
+                tmp = WriteLink(TheLink, buffer, 257, LINK_WRITE_TIMEOUT);
                 if (tmp != 257) {
                     /* for link speed */
                     if (information) {
