@@ -32,7 +32,7 @@ archive:
 # this makefile in 'included' by another makefile
 
 clean:
-		rm -f *.o ispy mtest
+		rm -f *.o ispy mtest CHECK??.TCO check??.h TYPE??.TCO type??.h
 
 #
 #  ispy
@@ -100,8 +100,6 @@ c011.o:
 
 D7305A=$(HOME)/d7305a/install/D7305A
 
-#note that D7205A toolset runs much of toolchain on a transputer.... I dont have a DOS PC with B008 so this won't work!
-#D7305A is almost all PC hosted but objects to the Occam code. /A cmd line switch disables the offending checks (I assume this enables "D7205 mode")
 DB=dosbox\
 	-c "mount D $(shell pwd)"\
 	-c "mount E $(D7305A)"\
@@ -109,63 +107,23 @@ DB=dosbox\
 	-c "SET ISEARCH=e:\libs\\"\
 	-c "D:"
 
-RM              = rm
-# Note /T must come last! 'A' or '2' is appended
-OCCAM		= oc /y /a /n /k /v /e /w /h /T
+OCCAM		= oc /y /a /n /k /v /e /w /h
 FIND            = grep
 
-type32.h:       type32.occ checklib.occ 
-	    	$(DB) -c "$(OCCAM)A type32" -c "ilist /c type32.tco > type32.tcl" -c "exit"
-		./tco2h.py TYPE32.TCL > type32.h
-	        $(FIND) "code size" < type32.h
-		$(RM) TYPE32.TCO
+16bit = type16.h check16.h mtest16.h
+32bit = type32.h check32.h mtest32.h
 
-type16.h:       type16.occ checklib.occ 
-		$(DB) -c "$(OCCAM)2 type16" -c "ilist /c type16.tco > type16.tcl" -c "exit"
-		./tco2h.py TYPE16.TCL > type16.h
-		$(FIND) "code size" < type16.h
-		$(RM) TYPE16.TCO
+$(filter %.h,$(32bit)): %.h : %.occ
+	$(DB) -c "$(OCCAM) /TA /o $(basename $^).tco $^ > oc.txt" -c "ilist /c $(basename $^).tco /o $(basename $^).tcl > ilist.txt" -c "exit"
+	cat OC.TXT
+	cat ILIST.TXT
+	./tco2h.py $(shell echo $(basename $^) | tr '[:lower:]' '[:upper:]').TCL > $@
+	$(FIND) "code size" $@
 
-check32.h:      check32.occ checklib.occ 
-		$(DB) -c "$(OCCAM)A check32" -c "ilist /c check32.tco > check32.tcl" -c "exit"
-		./tco2h.py CHECK32.TCL > check32.h
-		$(FIND) "code size" < check32.h
-		$(RM) CHECK32.TCO
+$(filter %.h,$(16bit)): %.h : %.occ
+	$(DB) -c "$(OCCAM) /T2 /o $(basename $^).tco $^ > oc.txt" -c "ilist /c $(basename $^).tco /o $(basename $^).tcl > ilist.txt" -c "exit"
+	cat OC.TXT
+	cat ILIST.TXT
+	./tco2h.py $(shell echo $(basename $^) | tr '[:lower:]' '[:upper:]').TCL > $@
+	$(FIND) "code size" $@
 
-check16.h:      check16.occ checklib.occ 
-		$(DB) -c "$(OCCAM)2 check16" -c "ilist /c check16.tco > check16.tcl" -c "exit"
-		./tco2h.py CHECK16.TCL > check16.h
-		$(FIND) "code size" < check16.h
-		$(RM) CHECK16.TCO
-
-# c00432.h:       c00432.occ checklib.occ 
-# 		$(OCCAM)A c00432
-# 		ilist -c c00432.tco | perl tco2h.pl > c00432.h
-# 		$(FIND) "total code requirement" < c00432.h
-# 		$(RM) c00432.tco
-# 
-# c00416.h:       c00416.occ checklib.occ 
-# 		$(OCCAM)2 c00416
-# 		ilist -c c00416.tco | perl tco2h.pl > c00416.h
-# 		$(FIND) "total code requirement" < c00416.h
-# 		$(RM) c00416.tco
-# 
-#
-#  mtest
-#
-#
-#mtest32.h:      mtest32.occ checklib.occ 
-#		$(OCCAM)A mtest32
-#		ilist -c mtest32.tco | perl tco2h.pl > mtest32.h
-#		$(FIND) "total code requirement" < mtest32.h
-#		$(RM) mtest32.tco
-#
-#mtest16.h:      mtest16.occ checklib.occ 
-#		$(OCCAM)2 mtest16
-#		ilist -c mtest16.tco | perl tco2h.pl > mtest16.h
-#		$(FIND) "total code requirement" < mtest16.h
-#		$(RM) mtest16.tco
-#
-#
-#  eof
-#
