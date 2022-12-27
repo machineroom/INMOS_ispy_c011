@@ -14,7 +14,7 @@ check.c: type16.h type32.h check16.h check32.h
 mtest.c: mtest16.h mtest32.h 
 
 clean:
-		rm -f *.o ispy mtest CHECK??.TCO check??.h TYPE??.TCO type??.h
+		rm -f *.o ispy mtest check??.h type??.h
 
 ispy:      check.o cklib.o $(LINKOBJS) 
 		$(LINK) -o ispy check.o cklib.o $(LINKOBJS) $(LIBRARIES)
