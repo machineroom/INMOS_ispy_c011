@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <errno.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "linkio.h"
 #include "inmos.h"
