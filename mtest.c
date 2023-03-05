@@ -85,6 +85,7 @@ void Usage (void)
 	fprintf (stdout, " %cx      :  Extra information on why memory search stopped\n", SWITCHAR);
 	fprintf (stdout, " %c0      :  Do not include root processor in tests\n", SWITCHAR);
 	fprintf (stdout, " %ci      :  show progress information\n", SWITCHAR);
+	fprintf (stdout, " %cr      :  reset the link\n\n", SWITCHAR);
 	fprintf (stdout, " %ch      :  display this help page\n\n", SWITCHAR);
 	fprintf (stdout, "  terminating <;> means memory wraps,\n");
 	fprintf (stdout, "  terminating <.> means memory stops. %cX switch will explain further\n", SWITCHAR);
@@ -285,7 +286,7 @@ void printresults (FILE * stream, struct tpstats *p, int quick, int extra)
 void getparams(int argc, char *argv[], int *zero, unsigned long *endaddr,
 	   int *c4s, int *logging, int *info,
 	   int *soak, int *T2, int *T4,
-	   int *only, int *quick, int *extra, char *CheckFile)
+	   int *only, int *quick, int *extra, int *reset, char *CheckFile)
 {
   /*{{{  command line switches  */
   ++argv;
@@ -357,6 +358,10 @@ void getparams(int argc, char *argv[], int *zero, unsigned long *endaddr,
 	   case 'X':
 	     *extra = TRUE;
 	     break;
+	   case 'r':
+	   case 'R':
+	     *reset = TRUE;
+	     break;
 	   default:
 	     Usage ();
 	     break;
@@ -389,9 +394,10 @@ main (int argc, char *argv[])
   unsigned long endaddr = 0x40000;
   int ok;
   int only = -1, iterations = 1;
+  int reset = 0;
   CheckFile[0] = '\0';
   getparams (argc, argv, &zero, &endaddr, &c4s, &logging,
-             &info, &soak, &T2, &T4, &only, &quick, &extra, CheckFile);
+             &info, &soak, &T2, &T4, &only, &quick, &extra, &reset, CheckFile);
   if (info) {
     printf ("# mtest reading ispy results\n");
   }
@@ -410,6 +416,9 @@ main (int argc, char *argv[])
   ok = (TheLink > 0);
   if (!ok) {
     AbortExit (PROGRAM_NAME, "Error opening link name \"%s\"", LinkName);
+  }
+  if (reset == 1) {
+	ResetLink(TheLink);
   }
   /* load 'em up */
   if (info) {
