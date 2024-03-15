@@ -6,8 +6,8 @@ COPTS           = -Wall
 OPTIM           = -O2
 CC              = gcc -c $(OPTIM) $(COPTS)
 HEADERS			= cklib.h inmos.h boot.h linkio.h
-LINKOBJS        = c011link.o c011.o
-LINKHEADERS     = c011.h pins.h
+LINKOBJS        = c011link.o c011.o gpiolib.c gpiochip_rp1.c util.c
+LINKHEADERS     = c011.h pins.h gpiochip.h gpiochip_rp1.h
 LINK            = gcc $(OPTIM)
 LIBRARIES       = -lbcm2835
 
